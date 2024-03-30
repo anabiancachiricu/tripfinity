@@ -1,6 +1,8 @@
 package com.unibuc.tripfinity.service;
 
+import com.unibuc.tripfinity.mapper.UserInfoMapper;
 import com.unibuc.tripfinity.model.UserInfo;
+import com.unibuc.tripfinity.model.UserInfoDTO;
 import com.unibuc.tripfinity.model.UserInfoDetails;
 import com.unibuc.tripfinity.repository.UserInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,10 @@ public class UserInfoService implements UserDetailsService {
     @Autowired
     private PasswordEncoder encoder;
 
+    @Autowired
+    private UserInfoMapper userInfoMapper;
+
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
@@ -33,9 +39,19 @@ public class UserInfoService implements UserDetailsService {
 
     public String addUser(UserInfo userInfo) {
         userInfo.setPassword(encoder.encode(userInfo.getPassword()));
+        userInfo.setRoles("ROLE_USER");
         repository.save(userInfo);
         return "User Added Successfully";
     }
 
+    public UserInfoDTO getUserProfile(String username){
+        Optional<UserInfo> userInfoOpt = repository.findByUsername(username);
+        if (userInfoOpt.isPresent()){
+            return userInfoMapper.mapToDTO(userInfoOpt.get());
+        }
+        else {
+            return null;
+        }
+    }
 
 }

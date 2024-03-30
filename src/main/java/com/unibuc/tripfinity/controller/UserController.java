@@ -2,9 +2,15 @@ package com.unibuc.tripfinity.controller;
 
 import com.unibuc.tripfinity.model.AuthRequest;
 import com.unibuc.tripfinity.model.UserInfo;
+import com.unibuc.tripfinity.model.UserInfoDTO;
 import com.unibuc.tripfinity.service.JwtService;
 import com.unibuc.tripfinity.service.UserInfoService;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,15 +36,17 @@ public class UserController {
     }
 
     @PostMapping("/addNewUser")
-    public String addNewUser(@RequestBody UserInfo userInfo) {
-        return service.addUser(userInfo);
+    public ResponseEntity<String> addNewUser(@RequestBody UserInfo userInfo) throws JSONException {
+        String responseMessage = service.addUser(userInfo);
+        return new ResponseEntity<>(new JSONObject().put("message", responseMessage).toString(), HttpStatus.OK);
     }
 
     @GetMapping("/user/userProfile")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public String userProfile() {
+    public UserInfoDTO userProfile(Authentication authentication) {
         //TODO: get user profile
-        return "Welcome to User Profile";
+        String username = authentication.getName();
+        return service.getUserProfile(username);
     }
 
     @GetMapping("/admin/adminProfile")
@@ -48,12 +56,14 @@ public class UserController {
     }
 
     @PostMapping("/generateToken")
-    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<String> authenticateAndGetToken(@RequestBody AuthRequest authRequest) throws JSONException {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
         if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(authRequest.getUsername());
+            String responseMessage =  jwtService.generateToken(authRequest.getUsername());
+            return new ResponseEntity<>(new JSONObject().put("message", responseMessage).toString(), HttpStatus.OK);
         } else {
-            throw new UsernameNotFoundException("invalid user request !");
+            String responseMessage = "Invalid user or password";
+            return new ResponseEntity<>(new JSONObject().put("message", responseMessage).toString(), HttpStatus.BAD_REQUEST);
         }
     }
 
