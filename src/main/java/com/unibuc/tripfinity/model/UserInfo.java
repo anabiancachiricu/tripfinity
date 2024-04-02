@@ -1,13 +1,11 @@
 package com.unibuc.tripfinity.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.File;
 import java.time.LocalDate;
 
 @Entity
@@ -26,5 +24,10 @@ public class UserInfo {
     private String password;
     private String roles;
     private LocalDate birthDate;
+    private String description;
+    private String imagePath;
+
+    @Transient // not saved in db
+    private File profilePicture;
 
 }

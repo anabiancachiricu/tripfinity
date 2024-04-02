@@ -18,6 +18,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/auth")
 public class UserController {
@@ -36,7 +38,7 @@ public class UserController {
     }
 
     @PostMapping("/addNewUser")
-    public ResponseEntity<String> addNewUser(@RequestBody UserInfo userInfo) throws JSONException {
+    public ResponseEntity<String> addNewUser(@RequestBody UserInfo userInfo) throws JSONException, IOException {
         String responseMessage = service.addUser(userInfo);
         return new ResponseEntity<>(new JSONObject().put("message", responseMessage).toString(), HttpStatus.OK);
     }

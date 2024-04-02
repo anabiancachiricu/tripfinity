@@ -1,5 +1,6 @@
 package com.unibuc.tripfinity.service;
 
+import com.unibuc.tripfinity.config.BucketName;
 import com.unibuc.tripfinity.mapper.UserInfoMapper;
 import com.unibuc.tripfinity.model.UserInfo;
 import com.unibuc.tripfinity.model.UserInfoDTO;
@@ -12,7 +13,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.io.IOException;
+import java.util.*;
+
+import static com.unibuc.tripfinity.utils.Constants.IMAGE_PATH;
+import static org.apache.http.entity.ContentType.*;
 
 @Service
 public class UserInfoService implements UserDetailsService {
@@ -26,6 +31,8 @@ public class UserInfoService implements UserDetailsService {
     @Autowired
     private UserInfoMapper userInfoMapper;
 
+    @Autowired
+    private S3Service s3Service;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -37,9 +44,13 @@ public class UserInfoService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found " + username));
     }
 
-    public String addUser(UserInfo userInfo) {
+    public String addUser(UserInfo userInfo) throws IOException {
         userInfo.setPassword(encoder.encode(userInfo.getPassword()));
         userInfo.setRoles("ROLE_USER");
+        if(userInfo.getProfilePicture() !=null){
+            userInfo.setImagePath(IMAGE_PATH+userInfo.getUsername());
+            s3Service.uploadFile(userInfo.getImagePath(), userInfo.getProfilePicture());
+        }
         repository.save(userInfo);
         return "User Added Successfully";
     }
