@@ -153,6 +153,34 @@ public class SecurityConfig{
                         "api/hotel/book", "api/hotel/getBookingByEmail", "api/hotel/getBookingByEmailAndId")
                 .permitAll()
 //                .requestMatchers("/*").permitAll()
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .oauth2Login().defaultSuccessUrl("http://localhost:4200/");
+
+        return http.sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                .cors().configurationSource(request -> {
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
+                    config.addAllowedOrigin("http://localhost:8080");
+                    config.setAllowedMethods(Collections.singletonList("*"));
+                    config.setAllowCredentials(true);
+                    config.setAllowedHeaders(Collections.singletonList("*"));
+                    config.setMaxAge(3600L);
+                    return config;
+                });
+
+        return http.csrf().disable().build();
+    }
+
+    @Bean
+    public SecurityFilterChain authFilterChain(HttpSecurity http) throws Exception {
+        http.csrf().disable()
+                .authorizeRequests()
+                .requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken").permitAll()
+                .requestMatchers("/auth/user/**").authenticated()
+                .requestMatchers("/auth/admin/**").authenticated()
+                .anyRequest().authenticated()
                 .and()
                 .oauth2Login().defaultSuccessUrl("http://localhost:4200/");
 
