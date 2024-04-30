@@ -91,9 +91,10 @@ public class UserController {
     }
 
     // Endpoint for social login with Google
+    @CrossOrigin(origins = {"http://localhost:4200","http://localhost:8080"} )
     @PostMapping("/login/google")
     public ResponseEntity<String> loginWithGoogle(HttpServletRequest request, @RequestBody Map<String, String> googleCredentials) {
-        String redirectUri = "http://localhost:8080/login/google/oauth2/code/google";
+        String redirectUri = "http://localhost:8080/auth/login/google/oauth2/code/google";
 
         // Build the OAuth2 authorization request
         OAuth2AuthorizationRequest.Builder builder = OAuth2AuthorizationRequest.authorizationCode();
@@ -113,23 +114,14 @@ public class UserController {
     }
 
 
-//    @PostMapping("/login/google")
-//    public ResponseEntity<String> loginWithGoogle(@RequestBody Map<String, String> googleCredentials) throws JSONException {
-//        // Implement logic to handle Google login
-//        // You can use Google's OAuth2 authentication here
-//        // Once authenticated, generate JWT token and return it
-//        // Example implementation:
-//         String token = jwtService.generateToken(googleCredentials.get("googleAccessToken"));
-//         log.info("Google token: "+ token);
-//         return ResponseEntity.ok().body(token);
-//    }
-
+    @CrossOrigin(origins = {"http://localhost:4200","http://localhost:8080"} )
     @GetMapping("/login/google/oauth2/code/google")
     public ResponseEntity<String> handleGoogleRedirect(@RequestParam("code") String code) {
         // Exchange the authorization code for an access token
         // You can use Spring Security's OAuth2 client support to handle this
         // Once authenticated, generate JWT token and return it
         // Example implementation:
+
         String token = jwtService.generateToken(code);
         log.info("Google token: " + token);
         return ResponseEntity.ok().body(token);
