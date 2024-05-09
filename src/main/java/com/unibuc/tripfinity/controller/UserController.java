@@ -37,8 +37,14 @@ public class UserController {
 
     @PostMapping("/addNewUser")
     public ResponseEntity<String> addNewUser(@RequestBody UserInfo userInfo) throws JSONException {
-        String responseMessage = service.addUser(userInfo);
-        return new ResponseEntity<>(new JSONObject().put("message", responseMessage).toString(), HttpStatus.OK);
+        try{
+            String responseMessage = service.addUser(userInfo);
+            return new ResponseEntity<>(new JSONObject().put("message", responseMessage).toString(), HttpStatus.OK);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(new JSONObject().put("message", e.getMessage()).toString(), HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @GetMapping("/user/userProfile")
