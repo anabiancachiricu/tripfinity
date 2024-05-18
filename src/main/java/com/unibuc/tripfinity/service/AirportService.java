@@ -1,14 +1,9 @@
 package com.unibuc.tripfinity.service;
 
-import com.amadeus.Amadeus;
-import com.amadeus.Params;
 import com.amadeus.exceptions.ResponseException;
-import com.amadeus.resources.City;
-import com.amadeus.resources.Destination;
-import com.amadeus.resources.FlightDestination;
-import com.amadeus.resources.Location;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.unibuc.tripfinity.model.AirportInfo;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -23,11 +18,10 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class CityService {
+public class AirportService {
     @Value("${amadeus.api.key}")
     private String apiKey;
 
@@ -37,7 +31,7 @@ public class CityService {
     private final CloseableHttpClient httpClient = HttpClients.createDefault();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public List<String> getAirports(String keyword) throws IOException, ResponseException {
+    public List<AirportInfo> getAirports(String keyword) throws IOException, ResponseException {
 
         System.out.println("HERE");
         String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
@@ -51,10 +45,19 @@ public class CityService {
             JsonNode rootNode = objectMapper.readTree(jsonResponse);
             JsonNode data = rootNode.path("data");
             System.out.println(data);
-            List<String> airports = new ArrayList<>();
+            List<AirportInfo> airports = new ArrayList<>();
             if (data.isArray()) {
                 for (JsonNode node : data) {
-                    airports.add(node.path("iataCode").asText());
+                    String iataCode = node.path("iataCode").asText();
+                    String cityName = node.path("cityName").asText();
+                    String airportName = node.path("name").asText();
+
+                    AirportInfo airportInfo = AirportInfo.builder()
+                            .airportName(airportName)
+                            .iataCode(iataCode)
+                            .cityName(cityName)
+                            .build();
+                    airports.add(airportInfo);
                 }
             }
             System.out.println("airports:"+ airports);

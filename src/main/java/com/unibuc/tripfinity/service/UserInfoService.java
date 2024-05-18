@@ -64,4 +64,19 @@ public class UserInfoService implements UserDetailsService {
         }
     }
 
+    public UserInfoDTO updateProfile(UserInfoDTO userInfoDTO){
+        Optional<UserInfo> userInfoOpt = repository.findUserInfoByEmail(userInfoDTO.getEmail());
+        if(userInfoOpt.isPresent()){
+            userInfoOpt.get().setFirstName(userInfoDTO.getFirstName());
+            userInfoOpt.get().setLastName(userInfoDTO.getLastName());
+            userInfoOpt.get().setBirthDate(userInfoDTO.getBirthDate());
+            userInfoOpt.get().setDescription(userInfoDTO.getDescription());
+            repository.save(userInfoOpt.get());
+            return userInfoMapper.mapToDTO(userInfoOpt.get());
+        }
+        else {
+            throw new RuntimeException("User not found");
+        }
+    }
+
 }

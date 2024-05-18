@@ -96,6 +96,22 @@ public class UserController {
         }
     }
 
+    @PostMapping("/user/updateUserProfile")
+    public ResponseEntity<UserInfoDTO> updateUser(@RequestBody UserInfoDTO userInfoDTO){
+        System.out.println("IN UPDATE USER");
+        try{
+            UserInfoDTO responseMessage = service.updateProfile(userInfoDTO);
+            System.out.println("IN UPDATE USER TRY");
+            return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+        }
+        catch (Exception e){
+            System.out.println("IN UPDATE USER ERROR "+ e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
     // Endpoint for social login with Google
     @CrossOrigin(origins = {"http://localhost:4200","http://localhost:8080"} )
     @PostMapping("/login/google")

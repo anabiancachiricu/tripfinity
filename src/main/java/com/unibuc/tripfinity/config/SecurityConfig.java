@@ -128,6 +128,23 @@ public class SecurityConfig{
                 .requestMatchers("/auth/user/**").authenticated()
                 .requestMatchers("/auth/admin/**").authenticated()
                 .anyRequest().authenticated()
+        return http
+                .cors().configurationSource( new CorsConfigurationSource(){
+            @Override
+            public CorsConfiguration getCorsConfiguration(HttpServletRequest request){
+                CorsConfiguration config = new CorsConfiguration();
+                config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
+                config.setAllowedMethods(Collections.singletonList("*"));
+                config.setAllowCredentials(true);
+                config.setAllowedHeaders(Collections.singletonList("*"));
+                config.setMaxAge(3600L);
+                return config;
+            }
+        }).and()
+                .csrf().disable()
+                .authorizeHttpRequests()
+                .requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken", "/auth/user/updateUserProfile", "flights/search", "flights/api/origin_airport_search", "flights/search_specific_flight", "flights/search_direct_destinations").permitAll()
+//                .requestMatchers("/*").permitAll()
                 .and()
                 .oauth2Login().defaultSuccessUrl("http://localhost:4200/");
 

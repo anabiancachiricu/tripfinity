@@ -13,6 +13,8 @@ public class UserInfoMapper {
                 .username(userInfo.getUsername())
                 .email(userInfo.getEmail())
                 .birthDate(userInfo.getBirthDate())
+                .description(userInfo.getDescription())
                 .build();
     }
+
 }
