@@ -56,7 +56,7 @@ public class SecurityConfig{
         }).and()
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken", "flights/search", "flights/api/origin_airport_search").permitAll()
+                .requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken", "/auth/user/updateUserProfile", "flights/search", "flights/api/origin_airport_search", "flights/search_specific_flight", "flights/search_direct_destinations").permitAll()
 //                .requestMatchers("/*").permitAll()
                 .and()
                 .authorizeHttpRequests().requestMatchers("/auth/user/**").authenticated()
