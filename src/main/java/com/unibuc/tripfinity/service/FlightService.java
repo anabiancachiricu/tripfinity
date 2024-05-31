@@ -6,21 +6,21 @@ import com.amadeus.exceptions.ResponseException;
 import com.amadeus.resources.Destination;
 import com.amadeus.resources.FlightDestination;
 import com.amadeus.resources.FlightOfferSearch;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.unibuc.tripfinity.mapper.DirectDestinationMapper;
 import com.unibuc.tripfinity.mapper.FlightDestinationMapper;
 import com.unibuc.tripfinity.mapper.FlightOfferMapper;
 import com.unibuc.tripfinity.model.DirectDestinationDTO;
+import com.unibuc.tripfinity.model.Flight;
 import com.unibuc.tripfinity.model.FlightDestinationDTO;
 import com.unibuc.tripfinity.model.FlightOfferDTO;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.unibuc.tripfinity.repository.FlightRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FlightService {
@@ -30,14 +30,25 @@ public class FlightService {
 
     @Value("${amadeus.api.secret}")
     private String apiSecret;
-    @Autowired
-    private FlightDestinationMapper flightDestinationMapper;
 
-    @Autowired
-    private DirectDestinationMapper directDestinationMapper;
+    private final FlightDestinationMapper flightDestinationMapper;
 
-    @Autowired
-    private FlightOfferMapper flightOfferMapper;
+
+    private final DirectDestinationMapper directDestinationMapper;
+
+    private final FlightOfferMapper flightOfferMapper;
+
+    private final FlightRepository flightRepository;
+
+    public FlightService(FlightDestinationMapper flightDestinationMapper,
+                         DirectDestinationMapper directDestinationMapper,
+                         FlightOfferMapper flightOfferMapper,
+                         FlightRepository flightRepository) {
+        this.flightDestinationMapper = flightDestinationMapper;
+        this.directDestinationMapper = directDestinationMapper;
+        this.flightOfferMapper = flightOfferMapper;
+        this.flightRepository = flightRepository;
+    }
 
     //direct destinations from origin airport
     public List<FlightDestination> searchFlightsFromAirport(String origin) throws ResponseException {
@@ -60,14 +71,14 @@ public class FlightService {
 
 
     //flights from an airport to another
-    public List<FlightOfferDTO> searchSpecificFlight(String origin, String destination, String departureDate, String returnDate ) throws ResponseException {
+    public List<FlightOfferDTO> searchSpecificFlight(String origin, String destination, String departureDate, String returnDate, int adults ) throws ResponseException {
         Amadeus amadeus = Amadeus.builder(apiKey, apiSecret).build();
 
         Params params = Params.with("originLocationCode", origin)
                 .and("destinationLocationCode", destination)
                 .and("departureDate",  departureDate)
                 .and("returnDate", returnDate)
-                .and("adults", 1)
+                .and("adults", adults)
                 .and("max", 3);
 
         FlightOfferSearch[] flightOffers = amadeus.shopping.flightOffersSearch.get(params);
@@ -122,6 +133,14 @@ public class FlightService {
             flightOfferDTOS.add(flightOfferMapper.mapToDTO(f));
         }
         return flightOfferDTOS;
+    }
+
+    public Flight addFlight(Flight flight){
+        return flightRepository.save(flight);
+    }
+
+    public Optional<Flight> getFlightByCarrierCodeAndAndFlightNumber(String carrierCode, String flightNumber){
+        return flightRepository.findByCarrierCodeAndAndFlightNumber(carrierCode, flightNumber);
     }
 
 
