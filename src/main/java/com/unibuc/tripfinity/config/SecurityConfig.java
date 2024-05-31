@@ -56,7 +56,15 @@ public class SecurityConfig{
         }).and()
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken", "/auth/user/updateUserProfile", "flights/search", "flights/api/origin_airport_search", "flights/search_specific_flight", "flights/search_direct_destinations").permitAll()
+                .requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken", "/auth/user/updateUserProfile",
+                        "flights/search", "flights/api/origin_airport_search", "flights/search_specific_flight", "flights/search_direct_destinations",
+                        "activities/search",  "activities/searchByIdAndCity",
+                        "/favourite/getFavouritesForUser", "favourite/addToFavouritesForUser",
+                        "wishlist/addNewWishlist",
+                        "flightBooking/add" , "flightBooking/getFlightBookingsByEmail",
+                        "hotels/search", "hotels/searchById",
+                        "api/hotel/book", "api/hotel/getBookingByEmail", "api/hotel/getBookingByEmailAndId")
+                .permitAll()
 //                .requestMatchers("/*").permitAll()
                 .and()
                 .authorizeHttpRequests().requestMatchers("/auth/user/**").authenticated()

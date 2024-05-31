@@ -63,9 +63,10 @@ public class FlightsController {
     public ResponseEntity<List<FlightOfferDTO>> searchFlightsFrom(@RequestParam String origin,
                                                                   @RequestParam String destination,
                                                                   @RequestParam String departureDate,
-                                                                  @RequestParam String returnDate) throws ResponseException, JSONException {
+                                                                  @RequestParam String returnDate,
+                                                                  @RequestParam int adults) throws ResponseException, JSONException {
         try {
-            List<FlightOfferDTO> responseMessage = flightService.searchSpecificFlight(origin, destination, departureDate, returnDate);
+            List<FlightOfferDTO> responseMessage = flightService.searchSpecificFlight(origin, destination, departureDate, returnDate, adults);
             System.out.println(responseMessage);
 //            List<FlightDestinationDTO> response = flightService.convertToMyFlightList(responseMessage);
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);
@@ -88,6 +89,7 @@ public class FlightsController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
 
 
