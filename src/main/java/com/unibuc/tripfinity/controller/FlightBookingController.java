@@ -2,6 +2,7 @@ package com.unibuc.tripfinity.controller;
 
 import com.unibuc.tripfinity.model.*;
 import com.unibuc.tripfinity.repository.FlightRepository;
+import com.unibuc.tripfinity.repository.PaymentRepository;
 import com.unibuc.tripfinity.service.DocumentService;
 import com.unibuc.tripfinity.service.FlightBookingService;
 import com.unibuc.tripfinity.service.FlightService;
@@ -25,14 +26,18 @@ public class FlightBookingController {
     private final PassengerService passengerService;
     private final DocumentService documentService;
     private final FlightRepository flightRepository;
+    private final PaymentRepository paymentRepository;
+
 
     public FlightBookingController(FlightBookingService flightBookingService, FlightService flightService, PassengerService passengerService, DocumentService documentService,
-                                   FlightRepository flightRepository) {
+                                   FlightRepository flightRepository,
+                                   PaymentRepository paymentRepository) {
         this.flightBookingService = flightBookingService;
         this.flightService = flightService;
         this.passengerService = passengerService;
         this.documentService = documentService;
         this.flightRepository = flightRepository;
+        this.paymentRepository = paymentRepository;
     }
 
     @PostMapping("/add")
@@ -40,16 +45,34 @@ public class FlightBookingController {
     public ResponseEntity<FlightBooking> createFlightBooking(Authentication authentication, @RequestBody FlightBooking flightBooking) {
         if (flightBooking == null || flightBooking.getDepartureFlight() == null ||
                 flightBooking.getReturnFlight() == null || flightBooking.getPassengerList() == null) {
+            System.out.println("CEVA E NULL");
+            System.out.println("flightBooking: " + flightBooking);
+            System.out.println("DEPARTURE FLIGHT" + flightBooking.getDepartureFlight());
+            System.out.println("RETURN FLIGHT" + flightBooking.getReturnFlight());
+            System.out.println("PASSENGERS" + flightBooking.getPassengerList());
+            System.out.println("PAYMENT " + flightBooking.getPayment());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         String username = authentication.getName();
+        System.out.println("USERNAME : " + username);
 
 
         try {
             handleFlights(flightBooking);
+            System.out.println("AM IESIT DIN HANDLE FLIGHTS");
+            System.out.println(flightBooking.getDepartureFlight());
+            System.out.println(flightBooking.getReturnFlight());
             handlePassengers(flightBooking);
+            System.out.println("AM IESIT DIN HANDLE PASSENGERS");
+            System.out.println(flightBooking.getPassengerList());
+            handlePayment(flightBooking);
+            System.out.println("AM IESIT DIN HANDLE PAYMENT");
+            System.out.println(flightBooking.getPayment());
 
             FlightBooking booking = flightBookingService.addFlightBooking(username,flightBooking);
+            System.out.println("AM TRECUT DE ADDFLIGHTBOOKING");
+            System.out.println(flightBooking);
+            flightBooking.getPayment().setFlightBooking(flightBooking);
             return new ResponseEntity<>(booking, HttpStatus.CREATED);
 
         } catch (Exception e) {
@@ -103,12 +126,37 @@ public class FlightBookingController {
         flightBooking.setPassengerList(passengers);
     }
 
+    private void handlePayment(FlightBooking flightBooking) throws Exception {
+        Payment payment = new Payment();
+        payment.setPaymentType(flightBooking.getPayment().getPaymentType());
+        payment.setCardNumber(flightBooking.getPayment().getCardNumber());
+        payment.setExpiryDate(flightBooking.getPayment().getExpiryDate());
+        Payment savedPayment = paymentRepository.save(payment);
+        flightBooking.setPayment(savedPayment);
+
+    }
+
     @GetMapping("/getFlightBookingsByEmail")
     public ResponseEntity<List<FlightBooking>> getFlightBookingByEmail(Authentication authentication){
         String username = authentication.getName();
         List<FlightBooking> flightBookings = flightBookingService.getFlightsForUser(username);
         return ResponseEntity.ok(flightBookings);
     }
+
+    @GetMapping("/getFlightBookingByEmailAndId")
+    public ResponseEntity<FlightBooking> getFlightBookingByEmailAndId(Authentication authentication,@RequestParam int flightBookingId){
+        String username = authentication.getName();
+        Optional<FlightBooking> flightBooking = flightBookingService.getFlightBookingById(username, flightBookingId);
+        if(flightBooking.isPresent()){
+            return ResponseEntity.ok(flightBooking.get());
+        }
+        else {
+            return ResponseEntity.status(500).build();
+        }
+
+    }
+
+
 
 
 }

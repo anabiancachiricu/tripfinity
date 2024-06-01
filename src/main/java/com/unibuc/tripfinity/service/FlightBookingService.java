@@ -37,4 +37,8 @@ public class FlightBookingService {
         return flightBookingRepository.findFlightBookingByUserEmail(email);
     }
 
+    public Optional<FlightBooking> getFlightBookingById(String email, int flightBookingId){
+        return flightBookingRepository.findFlightBookingByUserEmailAndFlightBookingId(email, flightBookingId);
+    }
+
 }

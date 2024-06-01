@@ -26,8 +26,12 @@ public class Payment {
     private String expiryDate;
 
     @OneToOne
-    @JoinColumn(name = "booking_id", nullable = false)
+    @JoinColumn(name = "booking_id", nullable = true)
     @JsonBackReference(value = "payment")
     private HotelBooking hotelBooking;
 
+    @OneToOne
+    @JoinColumn(name = "flight_booking_id", nullable = true)
+    @JsonBackReference(value = "flight_payment")
+    private FlightBooking flightBooking;
 }
