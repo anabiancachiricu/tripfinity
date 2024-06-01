@@ -1,6 +1,7 @@
 package com.unibuc.tripfinity.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,7 +28,8 @@ public class Passenger {
     private String phoneNumber;
 
     @ManyToMany(mappedBy = "passengerList")
-    @JsonBackReference(value = "passenger-booking")
+    @JsonManagedReference(value = "passenger-booking")
+    @JsonIgnore
     private List<FlightBooking> flightBookings;
 
     @OneToMany(mappedBy = "passenger", cascade = CascadeType.ALL, orphanRemoval = true)

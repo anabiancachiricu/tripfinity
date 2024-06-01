@@ -148,7 +148,7 @@ public class SecurityConfig{
                         "activities/search",  "activities/searchByIdAndCity",
                         "/favourite/getFavouritesForUser", "favourite/addToFavouritesForUser",
                         "wishlist/addNewWishlist",
-                        "flightBooking/add" , "flightBooking/getFlightBookingsByEmail",
+                        "flightBooking/add" , "flightBooking/getFlightBookingsByEmail", "flightBooking/getFlightBookingByEmailAndId",
                         "hotels/search", "hotels/searchById",
                         "api/hotel/book", "api/hotel/getBookingByEmail", "api/hotel/getBookingByEmailAndId")
                 .permitAll()
