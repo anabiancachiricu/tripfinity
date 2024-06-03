@@ -1,7 +1,9 @@
 package com.unibuc.tripfinity.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,6 +15,7 @@ import java.util.List;
 @Entity(name = "hotel")
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "hotelId")
 public class HotelDTO {
 
     @Id
@@ -31,7 +34,7 @@ public class HotelDTO {
     private double latitude;
 
     @OneToMany(mappedBy = "hotelDTO")
-    @JsonManagedReference("hoteldto-offer")
+//    @JsonManagedReference("hoteldto-offer")
     private List<HotelOfferDTO> hotelOffers;
 
 

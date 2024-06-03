@@ -14,6 +14,7 @@ public class PassengerService {
     }
 
     public Passenger addPassanger(Passenger passenger){
+        System.out.println("ADD PASSENGER ");
         return passengerRepository.save(passenger);
     }
 

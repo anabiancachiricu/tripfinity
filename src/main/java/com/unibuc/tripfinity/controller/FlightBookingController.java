@@ -108,13 +108,22 @@ public class FlightBookingController {
 
     private void handlePassengers(FlightBooking flightBooking) throws Exception {
         List<Passenger> passengers = new ArrayList<>();
+        System.out.println("SUNT IN HANDLE PASSENGERS");
         for (Passenger pass : flightBooking.getPassengerList()) {
             // First, save the passenger
-            Passenger savedPassenger = passengerService.addPassanger(pass);
+            System.out.println("PASSENGER: "+ pass);
+            Passenger passenger  = Passenger.builder().email(pass.getEmail())
+                    .firstName(pass.getFirstName())
+                    .lastName(pass.getLastName())
+                    .gender(pass.getGender())
+                    .phoneNumber(pass.getGender()).build();
+            Passenger savedPassenger = passengerService.addPassanger(passenger);
+            System.out.println("SAVED PASSENGER: "+savedPassenger);
 
             // Now, handle the documents for this saved passenger
             List<Document> docs = new ArrayList<>();
-            for (Document doc : savedPassenger.getDocuments()) {
+            for (Document doc : pass.getDocuments()) {
+                System.out.println("DOC: "+ doc);
                 doc.setPassenger(savedPassenger); // Ensure the document is associated with the saved passenger
                 Document addedDoc = documentService.addDocument(doc);
                 docs.add(addedDoc);

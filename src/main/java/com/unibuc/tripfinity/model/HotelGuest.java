@@ -1,8 +1,6 @@
 package com.unibuc.tripfinity.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import com.unibuc.tripfinity.validator.Email;
 import com.unibuc.tripfinity.validator.PhoneNumber;
 import jakarta.persistence.*;
@@ -16,6 +14,7 @@ import java.util.List;
 @Entity(name = "hotel_guest")
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "hotelGuestId")
 public class HotelGuest {
 
     @Id
@@ -40,7 +39,7 @@ public class HotelGuest {
     private int noOfAdditionalPeople;
 
     @OneToMany(mappedBy = "hotelGuest", cascade = CascadeType.ALL)
-    @JsonManagedReference(value = "guest")
+//    @JsonManagedReference(value = "guest")
 //    @JsonIgnore
     private List<HotelBooking> hotelBookingList;
 

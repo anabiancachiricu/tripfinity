@@ -1,8 +1,6 @@
 package com.unibuc.tripfinity.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,6 +12,7 @@ import java.util.List;
 @Entity(name = "flight_booking")
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "flightBookingId")
 public class FlightBooking {
 
     @Id
@@ -22,31 +21,32 @@ public class FlightBooking {
     private int flightBookingId;
 
     @ManyToOne
-    @JsonBackReference(value = "departure_flight")
+//    @JsonBackReference(value = "departure_flight")
     @JoinColumn(name = "departure_flight_id")
     private Flight departureFlight;
 
     @ManyToOne
-    @JsonBackReference(value = "return_flight")
+//    @JsonBackReference(value = "return_flight")
     @JoinColumn(name = "return_flight_id")
     private Flight returnFlight;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "flight_booking_passenger",
             joinColumns = @JoinColumn(name = "flight_booking_id"),
             inverseJoinColumns = @JoinColumn(name = "passenger_id")
     )
-    @JsonBackReference(value = "passenger-booking")
+//    @JsonBackReference(value = "passenger-booking")
 //    @JsonIgnore
     private List<Passenger> passengerList;
 
-    @OneToOne(mappedBy = "flightBooking", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference(value = "flight_payment")
+    @OneToOne(mappedBy = "flightBooking", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+//    @JsonManagedReference(value = "flight_payment")
     private Payment payment;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "email")
-    @JsonBackReference(value = "email_flight")
+    @JsonIgnore
+//    @JsonBackReference(value = "email_flight")
     private UserInfo user;
 }
