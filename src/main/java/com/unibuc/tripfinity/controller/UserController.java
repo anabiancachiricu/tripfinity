@@ -37,8 +37,14 @@ public class UserController {
 
     @PostMapping("/addNewUser")
     public ResponseEntity<String> addNewUser(@RequestBody UserInfo userInfo) throws JSONException {
-        String responseMessage = service.addUser(userInfo);
-        return new ResponseEntity<>(new JSONObject().put("message", responseMessage).toString(), HttpStatus.OK);
+        try{
+            String responseMessage = service.addUser(userInfo);
+            return new ResponseEntity<>(new JSONObject().put("message", responseMessage).toString(), HttpStatus.OK);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(new JSONObject().put("message", e.getMessage()).toString(), HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @GetMapping("/user/userProfile")
@@ -66,5 +72,21 @@ public class UserController {
             return new ResponseEntity<>(new JSONObject().put("message", responseMessage).toString(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping("/user/updateUserProfile")
+    public ResponseEntity<UserInfoDTO> updateUser(@RequestBody UserInfoDTO userInfoDTO){
+        System.out.println("IN UPDATE USER");
+        try{
+            UserInfoDTO responseMessage = service.updateProfile(userInfoDTO);
+            System.out.println("IN UPDATE USER TRY");
+            return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+        }
+        catch (Exception e){
+            System.out.println("IN UPDATE USER ERROR "+ e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 
 }

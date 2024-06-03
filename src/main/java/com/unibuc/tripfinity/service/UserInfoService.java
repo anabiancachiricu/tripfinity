@@ -38,10 +38,20 @@ public class UserInfoService implements UserDetailsService {
     }
 
     public String addUser(UserInfo userInfo) {
-        userInfo.setPassword(encoder.encode(userInfo.getPassword()));
-        userInfo.setRoles("ROLE_USER");
-        repository.save(userInfo);
-        return "User Added Successfully";
+        Optional<UserInfo> found = repository.findUserInfoByEmail(userInfo.getEmail());
+        System.out.println(found.isPresent());
+        if(found.isPresent()) {
+            System.out.println("HEREEEE IF");
+            throw new RuntimeException("User with given email already exists!");
+        }
+        else{
+            System.out.println("HEREEEE ELSE");
+            userInfo.setUsername(userInfo.getEmail());
+            userInfo.setPassword(encoder.encode(userInfo.getPassword()));
+            userInfo.setRoles("ROLE_USER");
+            repository.save(userInfo);
+            return "User Added Successfully";
+        }
     }
 
     public UserInfoDTO getUserProfile(String username){
@@ -51,6 +61,21 @@ public class UserInfoService implements UserDetailsService {
         }
         else {
             return null;
+        }
+    }
+
+    public UserInfoDTO updateProfile(UserInfoDTO userInfoDTO){
+        Optional<UserInfo> userInfoOpt = repository.findUserInfoByEmail(userInfoDTO.getEmail());
+        if(userInfoOpt.isPresent()){
+            userInfoOpt.get().setFirstName(userInfoDTO.getFirstName());
+            userInfoOpt.get().setLastName(userInfoDTO.getLastName());
+            userInfoOpt.get().setBirthDate(userInfoDTO.getBirthDate());
+            userInfoOpt.get().setDescription(userInfoDTO.getDescription());
+            repository.save(userInfoOpt.get());
+            return userInfoMapper.mapToDTO(userInfoOpt.get());
+        }
+        else {
+            throw new RuntimeException("User not found");
         }
     }
 
