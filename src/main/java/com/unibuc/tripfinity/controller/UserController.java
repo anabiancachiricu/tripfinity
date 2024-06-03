@@ -24,8 +24,10 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequ
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.Map;
 
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -97,22 +99,26 @@ public class UserController {
     }
 
     // Endpoint for social login with Google
+    @CrossOrigin(origins = {"http://localhost:4200", "http://localhost:8080"})
     @PostMapping("/login/google")
+    public ResponseEntity<Void> loginWithGoogle(HttpServletRequest request) {
+        String redirectUri = "http://localhost:8080/login/oauth2/code/google";
     public ResponseEntity<String> loginWithGoogle(HttpServletRequest request, @RequestBody Map<String, String> googleCredentials) {
         String redirectUri = "http://localhost:8080/login/google/oauth2/code/google";
 
         // Build the OAuth2 authorization request
-        OAuth2AuthorizationRequest.Builder builder = OAuth2AuthorizationRequest.authorizationCode();
-        builder.clientId("358584780474-n7n060qsdvjsufantlg5uette6ope0p5.apps.googleusercontent.com");
-        builder.authorizationUri("https://accounts.google.com/o/oauth2/auth");
-        builder.redirectUri(redirectUri);
-        builder.scope("openid", "profile", "email"); // Customize scopes as needed
-        OAuth2AuthorizationRequest authorizationRequest = builder.build();
+        OAuth2AuthorizationRequest authorizationRequest = OAuth2AuthorizationRequest
+                .authorizationCode()
+                .clientId("358584780474-n7n060qsdvjsufantlg5uette6ope0p5.apps.googleusercontent.com")
+                .authorizationUri("https://accounts.google.com/o/oauth2/auth")
+                .redirectUri(redirectUri)
+                .scopes(Set.of("openid", "profile", "email"))
+                .build();
 
         // Save the authorization request in the session
         request.getSession().setAttribute(OAuth2AuthorizationRequest.class.getName(), authorizationRequest);
 
-        // Redirect the user to the Google sign-up page
+        // Redirect the user to the Google sign-in page
         return ResponseEntity.status(HttpStatus.FOUND)
                 .header(HttpHeaders.LOCATION, authorizationRequest.getAuthorizationRequestUri())
                 .build();
@@ -133,6 +139,8 @@ public class UserController {
     @GetMapping("/login/google/oauth2/code/google")
     public ResponseEntity<String> handleGoogleRedirect(@RequestParam("code") String code) {
         // Exchange the authorization code for an access token
+        // For this, you can use Spring Security's OAuth2 client library or manually handle the token exchange
+        String token = jwtService.generateToken(code); // Example token generation
         // You can use Spring Security's OAuth2 client support to handle this
         // Once authenticated, generate JWT token and return it
         // Example implementation:

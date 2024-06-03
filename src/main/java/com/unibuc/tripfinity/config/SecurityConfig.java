@@ -104,6 +104,21 @@ public class SecurityConfig{
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .cors().configurationSource(new CorsConfigurationSource() {
+                    @Override
+                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                        CorsConfiguration configuration = new CorsConfiguration();
+                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://localhost:8080"));
+                        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
+                        configuration.setExposedHeaders(Arrays.asList("x-auth-token"));
+                        configuration.setAllowCredentials(true);
+                        configuration.setAllowedHeaders(Collections.singletonList("*"));
+                        configuration.setMaxAge(3600L);
+                        return configuration;
+                    }
+                }).and()
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .cors().configurationSource(request -> {
@@ -143,18 +158,18 @@ public class SecurityConfig{
         }).and()
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken", "/auth/user/updateUserProfile",
+                .requestMatchers(
+                        "/auth/welcome", "/auth/addNewUser", "/auth/generateToken", "/auth/user/updateUserProfile",
                         "flights/search", "flights/api/origin_airport_search", "flights/search_specific_flight", "flights/search_direct_destinations",
-                        "activities/search",  "activities/searchByIdAndCity",
+                        "activities/search", "activities/searchByIdAndCity",
                         "/favourite/getFavouritesForUser", "favourite/addToFavouritesForUser",
                         "wishlist/addNewWishlist",
-                        "flightBooking/add" , "flightBooking/getFlightBookingsByEmail", "flightBooking/getFlightBookingByEmailAndId",
+                        "flightBooking/add", "flightBooking/getFlightBookingsByEmail", "flightBooking/getFlightBookingByEmailAndId",
                         "hotels/search", "hotels/searchById",
-                        "api/hotel/book", "api/hotel/getBookingByEmail", "api/hotel/getBookingByEmailAndId")
-                .permitAll()
-//                .requestMatchers("/*").permitAll()
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        "api/hotel/book", "api/hotel/getBookingByEmail", "api/hotel/getBookingByEmailAndId"
+                ).permitAll()
                 .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 .oauth2Login().defaultSuccessUrl("http://localhost:4200/");
 
         return http.sessionManagement()
@@ -170,7 +185,7 @@ public class SecurityConfig{
                     return config;
                 });
 
-        return http.csrf().disable().build();
+        return http.build();
     }
 
     @Bean
@@ -199,7 +214,13 @@ public class SecurityConfig{
                 .and().build();
     }
 
-
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .cors().and().csrf().disable()
+                .authorizeRequests()
+                .requestMatchers("/login/google", "/login/oauth2/code/google").permitAll()
+                .anyRequest().authenticated();
+    }
 
 
     // Password Encoding
