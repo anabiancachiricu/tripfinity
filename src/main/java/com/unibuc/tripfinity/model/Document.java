@@ -1,6 +1,9 @@
 package com.unibuc.tripfinity.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,6 +13,7 @@ import lombok.*;
 @Entity(name = "document")
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "documentId")
 public class Document {
 
     @Id
@@ -23,7 +27,8 @@ public class Document {
 
     @ManyToOne
     @JoinColumn(name = "passenger_id", nullable = false)
-    @JsonBackReference(value = "documents")
+//    @JsonBackReference(value = "documents")
+    @JsonIgnore
     private Passenger passenger;
 
 }

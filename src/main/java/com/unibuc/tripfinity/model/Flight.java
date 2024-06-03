@@ -1,7 +1,6 @@
 package com.unibuc.tripfinity.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,6 +12,7 @@ import java.util.List;
 @Entity(name = "flight")
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "flightId")
 public class Flight {
 
     @Id
@@ -35,11 +35,13 @@ public class Flight {
     private String baggageWeightUnit;
 
     @OneToMany(mappedBy = "departureFlight")
-    @JsonManagedReference (value = "departure_flight")
+    @JsonIgnore
+//    @JsonManagedReference (value = "departure_flight")
     private List<FlightBooking> departureFlightBookings;
 
     @OneToMany(mappedBy = "returnFlight")
-    @JsonManagedReference(value = "return_flight")
+    @JsonIgnore
+//    @JsonManagedReference(value = "return_flight")
     private List<FlightBooking> returnFlightBookings;
 
 }

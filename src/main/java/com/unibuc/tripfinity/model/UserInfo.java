@@ -1,7 +1,9 @@
 package com.unibuc.tripfinity.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,6 +15,8 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "email")
+
 public class UserInfo {
 
     @Id
@@ -29,19 +33,19 @@ public class UserInfo {
     private String description;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference(value = "user_wishlist")
+//    @JsonManagedReference(value = "user_wishlist")
     private List<Wishlist> wishlists;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference(value = "user_favs")
+//    @JsonManagedReference(value = "user_favs")
     private List<Favourite> favourites;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference(value = "email")
+//    @JsonManagedReference(value = "email")
     private List<HotelBooking> hotelBookingList;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference(value = "email_flight")
+//    @JsonManagedReference(value = "email_flight")
     private List<FlightBooking> flightBookingList;
 
 }

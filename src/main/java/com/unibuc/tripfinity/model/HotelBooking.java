@@ -1,7 +1,6 @@
 package com.unibuc.tripfinity.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,6 +10,7 @@ import lombok.*;
 @Entity(name = "hotel_booking")
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "bookingId")
 public class HotelBooking {
 
     @Id
@@ -20,21 +20,22 @@ public class HotelBooking {
 
     @ManyToOne
     @JoinColumn(name = "hotel_offer_id", nullable = false)
-    @JsonBackReference(value = "hoteloffer")
+//    @JsonBackReference(value = "hoteloffer")
     private HotelOfferDTO hotelOfferDTO;
 
     @ManyToOne
     @JoinColumn(name = "hotel_guest_id", nullable = false)
-    @JsonBackReference (value = "guest")
+//    @JsonBackReference (value = "guest")
     private HotelGuest hotelGuest;
 
     @OneToOne(mappedBy = "hotelBooking", cascade = CascadeType.ALL)
-    @JsonManagedReference(value = "payment")
+//    @JsonManagedReference(value = "payment")
     private Payment payment;
 
     @ManyToOne
     @JoinColumn(name = "email", nullable = false)
-    @JsonBackReference(value = "email")
+//    @JsonBackReference(value = "email")
+    @JsonIgnore
     private UserInfo user;
 
 }
