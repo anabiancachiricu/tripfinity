@@ -99,12 +99,16 @@ public class FlightService {
     }
 
     public List<DirectDestinationDTO> searchDirectDestinations(String airportCode) throws ResponseException {
+        //Creare client Amadeus
         Amadeus amadeus = Amadeus.builder(apiKey, apiSecret).build();
+        //Setarea parametrilor necesari
         Params params = Params.with("departureAirportCode", airportCode);
+        //Request-ul realizat către Amadeus si salvarea lui într-o listă
         List<Destination> dests = Arrays.stream(amadeus.airport.directDestinations.get(params)).toList();
+        //Maparea rezultatului primit la modelul de date creat de aplicația Tripfinity
         List<DirectDestinationDTO> destinations = convertToDirectDestinationDTO(dests);
+        //Returnarea rezultatului final
         return destinations;
-
     }
 
 

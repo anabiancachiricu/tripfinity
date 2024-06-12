@@ -3,6 +3,7 @@ package com.unibuc.tripfinity.controller;
 import com.unibuc.tripfinity.model.AuthRequest;
 import com.unibuc.tripfinity.model.UserInfo;
 import com.unibuc.tripfinity.model.UserInfoDTO;
+import com.unibuc.tripfinity.service.EmailService;
 import com.unibuc.tripfinity.service.JwtService;
 import com.unibuc.tripfinity.service.UserInfoService;
 import org.json.JSONException;
@@ -30,6 +31,9 @@ public class UserController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private EmailService emailService;
+
     @GetMapping("/welcome")
     public String welcome() {
         return "Welcome this endpoint is not secure";
@@ -52,6 +56,7 @@ public class UserController {
     public UserInfoDTO userProfile(Authentication authentication) {
         //TODO: get user profile
         String username = authentication.getName();
+//        emailService.sendMail();
         return service.getUserProfile(username);
     }
 

@@ -63,25 +63,16 @@ public class HotelBookingService {
         hotelGuest.setNoOfAdditionalPeople(bookingRequest.getHotelGuest().getNoOfAdditionalPeople());
         hotelGuest = hotelGuestRepository.save(hotelGuest);
 
-
-
-//        HotelOfferDTO hotelOffer = hotelOfferRepository.findById(bookingRequest.getHotelOffer().getOfferId())
-//                .orElseThrow(() -> new IllegalArgumentException("Invalid hotel offer ID"));
-
-
         HotelBooking hotelBooking = new HotelBooking();
         hotelBooking.setHotelOfferDTO(hotelOffer);
         hotelBooking.setHotelGuest(hotelGuest);
-//        hotelBooking.setPayment(payment);
         hotelBooking.setUser(user.get());
-
         hotelBooking = hotelBookingRepository.save(hotelBooking);
 
         Payment payment = new Payment();
         payment.setPaymentType(bookingRequest.getPayment().getPaymentType());
         payment.setCardNumber(bookingRequest.getPayment().getCardNumber());
         payment.setExpiryDate(bookingRequest.getPayment().getExpiryDate());
-
 
         payment.setHotelBooking(hotelBooking);
         paymentRepository.save(payment);

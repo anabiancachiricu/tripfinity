@@ -63,6 +63,7 @@ public class HotelService {
     }
 
 
+
     public List<HotelDTO> convertToHotelDTO(List<Hotel> hotelList, String city){
         List<HotelDTO> hotelDTOS = new ArrayList<>();
 
@@ -77,15 +78,15 @@ public class HotelService {
                 .builder(apiKey, apiSecret)
                 .build();
 
-        System.out.println("CHECKIN: "+ checkIn);
+        //Setarea parametrilor
         Params params = Params.with("hotelIds", hotelId)
                 .and("checkInDate", checkIn)
                 .and("checkOutDate", checkOut)
                 .and("adults", adults);
-
+        //Obținerea rezultatelor
         HotelOfferSearch[] offers =  amadeus.shopping.hotelOffersSearch.get(params);
         List<HotelOfferSearch> searchOffers = Arrays.stream(offers).toList();
-        System.out.println(searchOffers);
+        //Maparea rezultatelor
         List<HotelOfferDTO> hotelOfferDTOS = convertToHotelOfferDTO(searchOffers);
         return hotelOfferDTOS;
 

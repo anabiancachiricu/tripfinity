@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -23,6 +24,13 @@ public class WishlistController {
     public WishlistController(WishlistService wishlistService, UserInfoRepository userInfoRepository) {
         this.wishlistService = wishlistService;
         this.userInfoRepository = userInfoRepository;
+    }
+
+    @GetMapping("/getWishlistsByUser")
+    public ResponseEntity<List<Wishlist>> getWishlistsByUser(Authentication authentication){
+        String username = authentication.getName();
+        List<Wishlist> wishlists = wishlistService.getWishlistByUserEmail(username);
+        return new ResponseEntity<>(wishlists, HttpStatus.OK);
     }
 
     @PostMapping("/addNewWishlist")
@@ -67,7 +75,9 @@ public class WishlistController {
                     .city(city)
                     .wishlist(selectedWishlist)
                     .build();
+            System.out.println("item :"+ item);
             selectedWishlist = wishlistService.addItemToWishlist(selectedWishlist, item);
+            System.out.println("selectedWishlist :"+ selectedWishlist);
             return new ResponseEntity<>(selectedWishlist, HttpStatus.OK);
         }
         catch (Exception e){

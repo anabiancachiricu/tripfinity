@@ -4,6 +4,7 @@ import com.unibuc.tripfinity.model.HotelBooking;
 import com.unibuc.tripfinity.model.HotelBookingRequest;
 import com.unibuc.tripfinity.model.UserInfo;
 import com.unibuc.tripfinity.repository.UserInfoRepository;
+import com.unibuc.tripfinity.service.EmailService;
 import com.unibuc.tripfinity.service.HotelBookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +19,14 @@ import java.util.Optional;
 public class HotelBookingController {
     @Autowired
     private HotelBookingService bookingService;
+    @Autowired
+    private EmailService emailService;
 
     @PostMapping("/book")
     public ResponseEntity<HotelBooking> createBooking(Authentication authentication, @RequestBody HotelBookingRequest bookingRequest) {
         String username = authentication.getName();
         HotelBooking hotelBooking = bookingService.createBooking(username, bookingRequest);
+        emailService.sendMail(hotelBooking.getHotelGuest().getEmail());
         return ResponseEntity.ok(hotelBooking);
     }
 

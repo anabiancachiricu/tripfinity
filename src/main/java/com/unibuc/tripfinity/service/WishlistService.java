@@ -34,6 +34,7 @@ public class WishlistService {
         List<WishlistItem> items = wishlist.getWishlistItems();
         items.add(wishlistItem);
         wishlist.setWishlistItems(items);
+        System.out.println("wishlist items"+ items);
         return wishlist;
     }
 

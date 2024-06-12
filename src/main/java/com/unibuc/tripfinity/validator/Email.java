@@ -1,6 +1,6 @@
 package com.unibuc.tripfinity.validator;
 
-import com.unibuc.tripfinity.Constants;
+import com.unibuc.tripfinity.utils.Constants;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
