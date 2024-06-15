@@ -18,6 +18,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -97,28 +101,13 @@ public class SecurityConfig{
 //                .requestMatchers("/login/google").permitAll()
 //                .requestMatchers("/login/facebook").permitAll()
 //                .and().build();
-        // Allow access to Facebook login endpoint
+    // Allow access to Facebook login endpoint
 
 
 //    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .cors().configurationSource(new CorsConfigurationSource() {
-                    @Override
-                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                        CorsConfiguration configuration = new CorsConfiguration();
-                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://localhost:8080"));
-                        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
-                        configuration.setExposedHeaders(Arrays.asList("x-auth-token"));
-                        configuration.setAllowCredentials(true);
-                        configuration.setAllowedHeaders(Collections.singletonList("*"));
-                        configuration.setMaxAge(3600L);
-                        return configuration;
-                    }
-                }).and()
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .cors().configurationSource(request -> {
@@ -143,61 +132,12 @@ public class SecurityConfig{
                 .requestMatchers("/auth/user/**").authenticated()
                 .requestMatchers("/auth/admin/**").authenticated()
                 .anyRequest().authenticated()
-        return http
-                .cors().configurationSource( new CorsConfigurationSource(){
-            @Override
-            public CorsConfiguration getCorsConfiguration(HttpServletRequest request){
-                CorsConfiguration config = new CorsConfiguration();
-                config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
-                config.setAllowedMethods(Collections.singletonList("*"));
-                config.setAllowCredentials(true);
-                config.setAllowedHeaders(Collections.singletonList("*"));
-                config.setMaxAge(3600L);
-                return config;
-            }
-        }).and()
-                .csrf().disable()
-                .authorizeHttpRequests()
-                .requestMatchers(
-                        "/auth/welcome", "/auth/addNewUser", "/auth/generateToken", "/auth/user/updateUserProfile",
-                        "flights/search", "flights/api/origin_airport_search", "flights/search_specific_flight", "flights/search_direct_destinations",
-                        "activities/search", "activities/searchByIdAndCity",
-                        "/favourite/getFavouritesForUser", "favourite/addToFavouritesForUser",
-                        "wishlist/addNewWishlist",
-                        "flightBooking/add", "flightBooking/getFlightBookingsByEmail", "flightBooking/getFlightBookingByEmailAndId",
-                        "hotels/search", "hotels/searchById",
-                        "api/hotel/book", "api/hotel/getBookingByEmail", "api/hotel/getBookingByEmailAndId"
-                ).permitAll()
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-                .oauth2Login().defaultSuccessUrl("http://localhost:4200/");
-
-        return http.sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                .cors().configurationSource(request -> {
-                    CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
-                    config.addAllowedOrigin("http://localhost:8080");
-                    config.setAllowedMethods(Collections.singletonList("*"));
-                    config.setAllowCredentials(true);
-                    config.setAllowedHeaders(Collections.singletonList("*"));
-                    config.setMaxAge(3600L);
-                    return config;
-                });
-
-        return http.build();
-    }
-
-    @Bean
-    public SecurityFilterChain authFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .authorizeRequests()
-                .requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken").permitAll()
-                .requestMatchers("/auth/user/**").authenticated()
-                .requestMatchers("/auth/admin/**").authenticated()
-                .anyRequest().authenticated()
-                .and()
-                .oauth2Login().defaultSuccessUrl("http://localhost:4200/");
+                .oauth2Login()
+                .loginPage("/auth/login")
+                .defaultSuccessUrl("/auth/oauth2/success")
+                .userInfoEndpoint()
+                .userService(oAuth2UserService());
 
         return http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
@@ -214,13 +154,11 @@ public class SecurityConfig{
                 .and().build();
     }
 
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .cors().and().csrf().disable()
-                .authorizeRequests()
-                .requestMatchers("/login/google", "/login/oauth2/code/google").permitAll()
-                .anyRequest().authenticated();
+    @Bean
+    public OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService() {
+        return new DefaultOAuth2UserService();
     }
+
 
 
     // Password Encoding

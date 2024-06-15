@@ -24,10 +24,8 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequ
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.Map;
 
-import java.util.Set;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -55,6 +53,13 @@ public class UserController {
         return "Welcome this endpoint is not secure";
     }
 
+    @GetMapping("/oauth2/success")
+    public ResponseEntity<String> getOAuth2Success(Authentication authentication) {
+        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+        String token = jwtService.generateToken(oAuth2User.getName());
+        return ResponseEntity.ok().body(token);
+    }
+
     @GetMapping("/user1")
     public Map<String, Object> getUser(@AuthenticationPrincipal OAuth2User user){
         return user.getAttributes();
@@ -62,14 +67,8 @@ public class UserController {
 
     @PostMapping("/addNewUser")
     public ResponseEntity<String> addNewUser(@RequestBody UserInfo userInfo) throws JSONException {
-        try{
-            String responseMessage = service.addUser(userInfo);
-            return new ResponseEntity<>(new JSONObject().put("message", responseMessage).toString(), HttpStatus.OK);
-        }
-        catch (Exception e){
-            return new ResponseEntity<>(new JSONObject().put("message", e.getMessage()).toString(), HttpStatus.BAD_REQUEST);
-        }
-
+        String responseMessage = service.addUser(userInfo);
+        return new ResponseEntity<>(new JSONObject().put("message", responseMessage).toString(), HttpStatus.OK);
     }
 
     @GetMapping("/user/userProfile")
@@ -97,88 +96,6 @@ public class UserController {
             return new ResponseEntity<>(new JSONObject().put("message", responseMessage).toString(), HttpStatus.BAD_REQUEST);
         }
     }
-
-    // Endpoint for social login with Google
-    @CrossOrigin(origins = {"http://localhost:4200", "http://localhost:8080"})
-    @PostMapping("/login/google")
-    public ResponseEntity<Void> loginWithGoogle(HttpServletRequest request) {
-        String redirectUri = "http://localhost:8080/login/oauth2/code/google";
-    public ResponseEntity<String> loginWithGoogle(HttpServletRequest request, @RequestBody Map<String, String> googleCredentials) {
-        String redirectUri = "http://localhost:8080/login/google/oauth2/code/google";
-
-        // Build the OAuth2 authorization request
-        OAuth2AuthorizationRequest authorizationRequest = OAuth2AuthorizationRequest
-                .authorizationCode()
-                .clientId("358584780474-n7n060qsdvjsufantlg5uette6ope0p5.apps.googleusercontent.com")
-                .authorizationUri("https://accounts.google.com/o/oauth2/auth")
-                .redirectUri(redirectUri)
-                .scopes(Set.of("openid", "profile", "email"))
-                .build();
-
-        // Save the authorization request in the session
-        request.getSession().setAttribute(OAuth2AuthorizationRequest.class.getName(), authorizationRequest);
-
-        // Redirect the user to the Google sign-in page
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .header(HttpHeaders.LOCATION, authorizationRequest.getAuthorizationRequestUri())
-                .build();
-    }
-
-
-//    @PostMapping("/login/google")
-//    public ResponseEntity<String> loginWithGoogle(@RequestBody Map<String, String> googleCredentials) throws JSONException {
-//        // Implement logic to handle Google login
-//        // You can use Google's OAuth2 authentication here
-//        // Once authenticated, generate JWT token and return it
-//        // Example implementation:
-//         String token = jwtService.generateToken(googleCredentials.get("googleAccessToken"));
-//         log.info("Google token: "+ token);
-//         return ResponseEntity.ok().body(token);
-//    }
-
-    @GetMapping("/login/google/oauth2/code/google")
-    public ResponseEntity<String> handleGoogleRedirect(@RequestParam("code") String code) {
-        // Exchange the authorization code for an access token
-        // For this, you can use Spring Security's OAuth2 client library or manually handle the token exchange
-        String token = jwtService.generateToken(code); // Example token generation
-        // You can use Spring Security's OAuth2 client support to handle this
-        // Once authenticated, generate JWT token and return it
-        // Example implementation:
-        String token = jwtService.generateToken(code);
-        log.info("Google token: " + token);
-        return ResponseEntity.ok().body(token);
-    }
-
-    // Endpoint for social login with Facebook
-    @PostMapping("/login/facebook")
-    public ResponseEntity<String> loginWithFacebook(@RequestBody Map<String, String> facebookCredentials) throws JSONException {
-        // Implement logic to handle Facebook login
-        // You can use Facebook's OAuth2 authentication here
-        // Once authenticated, generate JWT token and return it
-//         Example implementation:
-         String token = jwtService.generateToken(facebookCredentials.get("facebookAccessToken"));
-         log.info("Facebook token: "+ token);
-         return ResponseEntity.ok().body(token);
-    }
-
-
-
-
-    @PostMapping("/user/updateUserProfile")
-    public ResponseEntity<UserInfoDTO> updateUser(@RequestBody UserInfoDTO userInfoDTO){
-        System.out.println("IN UPDATE USER");
-        try{
-            UserInfoDTO responseMessage = service.updateProfile(userInfoDTO);
-            System.out.println("IN UPDATE USER TRY");
-            return new ResponseEntity<>(responseMessage, HttpStatus.OK);
-        }
-        catch (Exception e){
-            System.out.println("IN UPDATE USER ERROR "+ e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-
 
     // Endpoint for social login with Google
     @CrossOrigin(origins = {"http://localhost:4200","http://localhost:8080"} )
@@ -224,9 +141,9 @@ public class UserController {
         // You can use Facebook's OAuth2 authentication here
         // Once authenticated, generate JWT token and return it
 //         Example implementation:
-         String token = jwtService.generateToken(facebookCredentials.get("facebookAccessToken"));
-         log.info("Facebook token: "+ token);
-         return ResponseEntity.ok().body(token);
+        String token = jwtService.generateToken(facebookCredentials.get("facebookAccessToken"));
+        log.info("Facebook token: "+ token);
+        return ResponseEntity.ok().body(token);
     }
 
 
