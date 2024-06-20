@@ -1,7 +1,11 @@
 package com.unibuc.tripfinity.model;
 
 import com.fasterxml.jackson.annotation.*;
+import com.unibuc.tripfinity.validator.Email;
+import com.unibuc.tripfinity.validator.OnlyLetters;
+import com.unibuc.tripfinity.validator.PhoneNumber;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.List;
@@ -20,10 +24,23 @@ public class Passenger {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int passengerId;
 
+    @NotNull
+    @OnlyLetters
     private String firstName;
+
+    @NotNull
+    @OnlyLetters
     private String lastName;
+
+    @NotNull
     private String gender;
+
+    @NotNull
+    @Email
     private String email;
+
+    @NotNull
+//    @PhoneNumber
     private String phoneNumber;
 
     @ManyToMany(mappedBy = "passengerList")

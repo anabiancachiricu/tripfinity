@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.unibuc.tripfinity.validator.OnlyNumbers;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Builder
@@ -24,8 +26,11 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private PaymentType paymentType;
 
+    @NotNull
+    @OnlyNumbers
     private String cardNumber;
 
+    @NotNull
     private String expiryDate;
 
     @OneToOne

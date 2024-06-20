@@ -1,14 +1,14 @@
 package com.unibuc.tripfinity.validator;
 
-
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class PhoneNumberValidation implements ConstraintValidator<PhoneNumber, String> {
+public class OnlyLettersValidation implements ConstraintValidator<OnlyLetters, String> {
     @Override
     public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
-        if(value == null)
+        if (value == null)
             return false;
-        return value.matches("^07\\d{8}$");
+        return value.matches("^[a-zA-Z\\s]*$");
     }
 }
+

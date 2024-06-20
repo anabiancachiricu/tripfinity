@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.unibuc.tripfinity.validator.Email;
+import com.unibuc.tripfinity.validator.OnlyLetters;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -23,9 +26,17 @@ public class UserInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String username;
+
+    @NotNull
+    @OnlyLetters
     private String firstName;
+
+    @NotNull
+    @OnlyLetters
     private String lastName;
+
     @Column(unique = true, nullable = false)
+    @Email
     private String email;
     private String password;
     private String roles;
