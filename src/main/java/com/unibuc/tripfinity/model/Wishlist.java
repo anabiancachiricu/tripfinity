@@ -1,9 +1,6 @@
 package com.unibuc.tripfinity.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,11 +25,12 @@ public class Wishlist {
 
     @ManyToOne
     @JoinColumn(name = "email")
+    @JsonIgnore
 //    @JsonBackReference(value = "user_wishlist")
     private UserInfo user;
 
     @OneToMany(mappedBy = "wishlist")
-//    @JsonManagedReference (value = "wishlist")
+    @JsonManagedReference (value = "wishlist")
     private List<WishlistItem> wishlistItems;
 
 }

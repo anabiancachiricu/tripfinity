@@ -19,6 +19,7 @@ public class WishlistItem {
     private int id;
 
     private String activityId;
+    private String activityName;
     private String city;
 
     @ManyToOne

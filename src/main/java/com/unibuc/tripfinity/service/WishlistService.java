@@ -27,7 +27,12 @@ public class WishlistService {
     }
 
     public Optional<Wishlist> getByNameAndAndUser(String name, UserInfo userInfo){
-        return wishlistRepository.findByNameAndAndUser(name, userInfo);
+        System.out.println("IN SERVICE getByNameAndAndUser");
+        System.out.println("NAME: " + name);
+        System.out.println("USER INFO "+ userInfo);
+        Optional<Wishlist> result = wishlistRepository.findByNameAndAndUser(name, userInfo);
+        System.out.println("RESULT "+ result);
+        return result;
     }
 
     public Wishlist addItemToWishlist(Wishlist wishlist, WishlistItem wishlistItem){

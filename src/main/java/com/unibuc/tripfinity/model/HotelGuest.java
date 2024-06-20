@@ -2,6 +2,7 @@ package com.unibuc.tripfinity.model;
 
 import com.fasterxml.jackson.annotation.*;
 import com.unibuc.tripfinity.validator.Email;
+import com.unibuc.tripfinity.validator.OnlyLetters;
 import com.unibuc.tripfinity.validator.PhoneNumber;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,17 +24,19 @@ public class HotelGuest {
     private Long hotelGuestId;
 
     @NonNull
+    @OnlyLetters
     private String firstName;
 
     @NonNull
+    @OnlyLetters
     private String lastName;
 
     @NonNull
-    @PhoneNumber
+//    @PhoneNumber
     private String phoneNumber;
 
     @NonNull
-//    @Email
+    @Email
     private String email;
 
     private int noOfAdditionalPeople;
