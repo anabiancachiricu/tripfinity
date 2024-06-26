@@ -1,14 +1,12 @@
 package com.unibuc.tripfinity.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import com.unibuc.tripfinity.validator.Email;
 import com.unibuc.tripfinity.validator.OnlyLetters;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -42,6 +40,8 @@ public class UserInfo {
     private String roles;
     private LocalDate birthDate;
     private String description;
+
+    private String profilePictureEtag;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 //    @JsonManagedReference(value = "user_wishlist")

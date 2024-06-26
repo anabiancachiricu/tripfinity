@@ -5,19 +5,23 @@ import com.unibuc.tripfinity.model.UserInfo;
 import com.unibuc.tripfinity.model.UserInfoDTO;
 import com.unibuc.tripfinity.service.EmailService;
 import com.unibuc.tripfinity.service.JwtService;
+import com.unibuc.tripfinity.service.S3Service;
 import com.unibuc.tripfinity.service.UserInfoService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 
 @RestController
 @RequestMapping("/auth")
@@ -34,12 +38,15 @@ public class UserController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private S3Service s3Service;
+
     @GetMapping("/welcome")
     public String welcome() {
         return "Welcome this endpoint is not secure";
     }
 
-    @PostMapping("/addNewUser")
+    @PostMapping(value = "/addNewUser", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> addNewUser(@RequestBody UserInfo userInfo) throws JSONException {
         try{
             String responseMessage = service.addUser(userInfo);
@@ -91,6 +98,17 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+        try {
+            String eTag = s3Service.uploadFile(file);
+            return ResponseEntity.ok("File uploaded successfully, ETag: " + eTag);
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("File upload failed: " + e.getMessage());
+        }
+    }
+
 
 
 

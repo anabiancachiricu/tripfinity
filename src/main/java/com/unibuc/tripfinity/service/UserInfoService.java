@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -25,6 +26,9 @@ public class UserInfoService implements UserDetailsService {
 
     @Autowired
     private UserInfoMapper userInfoMapper;
+
+    @Autowired
+    private S3Service s3Service;
 
 
     @Override
@@ -49,6 +53,13 @@ public class UserInfoService implements UserDetailsService {
             userInfo.setUsername(userInfo.getEmail());
             userInfo.setPassword(encoder.encode(userInfo.getPassword()));
             userInfo.setRoles("ROLE_USER");
+//            try {
+//                String eTag = s3Service.uploadFile(profilePicture);
+//                userInfo.setProfilePictureEtag(eTag);
+//            }catch (Exception e){
+//                throw new RuntimeException("Profile picture could not be saved");
+//            }
+
             repository.save(userInfo);
             return "User Added Successfully";
         }

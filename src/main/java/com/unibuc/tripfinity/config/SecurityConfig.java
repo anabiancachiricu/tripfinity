@@ -56,7 +56,7 @@ public class SecurityConfig{
         }).and()
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken", "/auth/user/updateUserProfile",
+                .requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken", "/auth/user/updateUserProfile", "auth/upload",
                         "flights/search", "flights/api/origin_airport_search", "flights/search_specific_flight", "flights/search_direct_destinations",
                         "activities/search",  "activities/searchByIdAndCity",
                         "/favourite/getFavouritesForUser", "favourite/addToFavouritesForUser",
@@ -66,7 +66,7 @@ public class SecurityConfig{
                         "api/hotel/book", "api/hotel/getBookingByEmail", "api/hotel/getBookingByEmailAndId",
                         "wishlist/getWishlistsByUser", "wishlist/addItemToWishlist", "wishlist/getWishlistsNameByUser")
                 .permitAll()
-//                .requestMatchers("/*").permitAll()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                 .and()
                 .authorizeHttpRequests().requestMatchers("/auth/user/**").authenticated()
                 .and()
