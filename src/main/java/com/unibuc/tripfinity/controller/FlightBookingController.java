@@ -3,10 +3,7 @@ package com.unibuc.tripfinity.controller;
 import com.unibuc.tripfinity.model.*;
 import com.unibuc.tripfinity.repository.FlightRepository;
 import com.unibuc.tripfinity.repository.PaymentRepository;
-import com.unibuc.tripfinity.service.DocumentService;
-import com.unibuc.tripfinity.service.FlightBookingService;
-import com.unibuc.tripfinity.service.FlightService;
-import com.unibuc.tripfinity.service.PassengerService;
+import com.unibuc.tripfinity.service.*;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,16 +25,19 @@ public class FlightBookingController {
     private final FlightRepository flightRepository;
     private final PaymentRepository paymentRepository;
 
+    private final EmailService emailService;
+
 
     public FlightBookingController(FlightBookingService flightBookingService, FlightService flightService, PassengerService passengerService, DocumentService documentService,
                                    FlightRepository flightRepository,
-                                   PaymentRepository paymentRepository) {
+                                   PaymentRepository paymentRepository, EmailService emailService) {
         this.flightBookingService = flightBookingService;
         this.flightService = flightService;
         this.passengerService = passengerService;
         this.documentService = documentService;
         this.flightRepository = flightRepository;
         this.paymentRepository = paymentRepository;
+        this.emailService = emailService;
     }
 
     @PostMapping("/add")
@@ -73,6 +73,9 @@ public class FlightBookingController {
             System.out.println("AM TRECUT DE ADDFLIGHTBOOKING");
             System.out.println(flightBooking);
             flightBooking.getPayment().setFlightBooking(flightBooking);
+            for (Passenger pass : booking.getPassengerList()){
+                emailService.sendMailForFlights(pass.getEmail());
+            }
             return new ResponseEntity<>(booking, HttpStatus.CREATED);
 
         } catch (Exception e) {

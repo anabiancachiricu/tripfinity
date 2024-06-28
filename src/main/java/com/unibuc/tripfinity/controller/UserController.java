@@ -34,6 +34,7 @@ public class UserController {
     @Autowired
     private EmailService emailService;
 
+
     @GetMapping("/welcome")
     public String welcome() {
         return "Welcome this endpoint is not secure";
@@ -43,6 +44,7 @@ public class UserController {
     public ResponseEntity<String> addNewUser(@RequestBody UserInfo userInfo) throws JSONException {
         try{
             String responseMessage = service.addUser(userInfo);
+            emailService.sendMailForSignup(userInfo.getEmail());
             return new ResponseEntity<>(new JSONObject().put("message", responseMessage).toString(), HttpStatus.OK);
         }
         catch (Exception e){
