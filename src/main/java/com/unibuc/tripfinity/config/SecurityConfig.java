@@ -64,7 +64,8 @@ public class SecurityConfig{
                         "flightBooking/add" , "flightBooking/getFlightBookingsByEmail", "flightBooking/getFlightBookingByEmailAndId",
                         "hotels/search", "hotels/searchById",
                         "api/hotel/book", "api/hotel/getBookingByEmail", "api/hotel/getBookingByEmailAndId",
-                        "wishlist/getWishlistsByUser", "wishlist/addItemToWishlist", "wishlist/getWishlistsNameByUser")
+                        "wishlist/getWishlistsByUser", "wishlist/addItemToWishlist", "wishlist/getWishlistsNameByUser",
+                        "chat/ask")
                 .permitAll()
 //                .requestMatchers("/*").permitAll()
                 .and()
