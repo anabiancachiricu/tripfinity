@@ -25,7 +25,7 @@ public class HotelOfferMapper {
                 .offerId(hotelOfferSearch.getOffers()[0].getId())
                 .checkInDate(hotelOfferSearch.getOffers()[0].getCheckInDate())
                 .checkOutDate(hotelOfferSearch.getOffers()[0].getCheckOutDate())
-                .description(hotelOfferSearch.getOffers()[0].getDescription().getText())
+//                .description(hotelOfferSearch.getOffers()[0].getDescription().getText())
                 .roomCategory(hotelOfferSearch.getOffers()[0].getRoom().getTypeEstimated().getCategory())
                 .bedType(hotelOfferSearch.getOffers()[0].getRoom().getTypeEstimated().getBedType())
                 .noOfBeds(beds)

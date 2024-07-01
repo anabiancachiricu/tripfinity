@@ -25,10 +25,16 @@ import java.util.Optional;
 @Service
 public class FlightService {
 
-    @Value("${amadeus.api.key}")
+//    @Value("${amadeus.api.key}")
+//    private String apiKey;
+//
+//    @Value("${amadeus.api.secret}")
+//    private String apiSecret;
+
+    @Value("${amadeus.api.key.prod}")
     private String apiKey;
 
-    @Value("${amadeus.api.secret}")
+    @Value("${amadeus.api.secret.prod}")
     private String apiSecret;
 
     private final FlightDestinationMapper flightDestinationMapper;
@@ -52,7 +58,9 @@ public class FlightService {
 
     //direct destinations from origin airport
     public List<FlightDestination> searchFlightsFromAirport(String origin) throws ResponseException {
-        Amadeus amadeus = Amadeus.builder(apiKey, apiSecret).build();
+        Amadeus amadeus = Amadeus.builder(apiKey, apiSecret)
+                .setHostname("production")
+                .build();
 
         Params params = Params.with("origin", origin);
         FlightDestination[] flightDestinations = amadeus.shopping.flightDestinations.get(params);
@@ -72,7 +80,9 @@ public class FlightService {
 
     //flights from an airport to another
     public List<FlightOfferDTO> searchSpecificFlight(String origin, String destination, String departureDate, String returnDate, int adults ) throws ResponseException {
-        Amadeus amadeus = Amadeus.builder(apiKey, apiSecret).build();
+        Amadeus amadeus = Amadeus.builder(apiKey, apiSecret)
+                .setHostname("production")
+                .build();
 
         Params params = Params.with("originLocationCode", origin)
                 .and("destinationLocationCode", destination)
@@ -100,7 +110,9 @@ public class FlightService {
 
     public List<DirectDestinationDTO> searchDirectDestinations(String airportCode) throws ResponseException {
         //Creare client Amadeus
-        Amadeus amadeus = Amadeus.builder(apiKey, apiSecret).build();
+        Amadeus amadeus = Amadeus.builder(apiKey, apiSecret)
+                .setHostname("production")
+                .build();
         //Setarea parametrilor necesari
         Params params = Params.with("departureAirportCode", airportCode);
         //Request-ul realizat către Amadeus si salvarea lui într-o listă

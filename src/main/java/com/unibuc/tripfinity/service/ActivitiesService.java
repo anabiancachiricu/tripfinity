@@ -17,10 +17,16 @@ import java.util.Map;
 @Service
 public class ActivitiesService {
 
-    @Value("${amadeus.api.key}")
+//    @Value("${amadeus.api.key}")
+//    private String apiKey;
+//
+//    @Value("${amadeus.api.secret}")
+//    private String apiSecret;
+
+    @Value("${amadeus.api.key.prod}")
     private String apiKey;
 
-    @Value("${amadeus.api.secret}")
+    @Value("${amadeus.api.secret.prod}")
     private String apiSecret;
 
     private final CityService cityService;
@@ -36,6 +42,7 @@ public class ActivitiesService {
         cityName= cityName.toUpperCase();
         Amadeus amadeus = Amadeus
                 .builder(apiKey, apiSecret)
+                .setHostname("production")
                 .build();
 
         Map<String, Double> cityCoordinates = cityService.getCityCoordinates(cityName);
@@ -66,6 +73,7 @@ public class ActivitiesService {
     public ActivityDTO searchActivityById(String activityId, String city) throws ResponseException {
         Amadeus amadeus = Amadeus
                 .builder(apiKey, apiSecret)
+                .setHostname("production")
                 .build();
 
         Activity activity = amadeus.shopping.activity(activityId).get();

@@ -20,10 +20,16 @@ import java.util.Map;
 @Service
 public class HotelService {
 
-    @Value("${amadeus.api.key}")
+//    @Value("${amadeus.api.key}")
+//    private String apiKey;
+//
+//    @Value("${amadeus.api.secret}")
+//    private String apiSecret;
+
+    @Value("${amadeus.api.key.prod}")
     private String apiKey;
 
-    @Value("${amadeus.api.secret}")
+    @Value("${amadeus.api.secret.prod}")
     private String apiSecret;
 
     private final CityService cityService;
@@ -42,6 +48,7 @@ public class HotelService {
         cityName= cityName.toUpperCase();
         Amadeus amadeus = Amadeus
                 .builder(apiKey, apiSecret)
+                .setHostname("production")
                 .build();
 
         Map<String, Double> cityCoordinates = cityService.getCityCoordinates(cityName);
@@ -76,6 +83,7 @@ public class HotelService {
     public List<HotelOfferDTO> searchOffer(String hotelId, String checkIn, String checkOut, int adults) throws ResponseException {
         Amadeus amadeus = Amadeus
                 .builder(apiKey, apiSecret)
+                .setHostname("production")
                 .build();
 
         //Setarea parametrilor
@@ -104,6 +112,7 @@ public class HotelService {
     public HotelDTO searchHotelById(String hotelId, String city) throws ResponseException {
         Amadeus amadeus = Amadeus
                 .builder(apiKey, apiSecret)
+                .setHostname("production")
                 .build();
         System.out.println("HOTEL ID IN SEARCH: "+ hotelId);
         List<String> hotelIdList = new ArrayList<>();
