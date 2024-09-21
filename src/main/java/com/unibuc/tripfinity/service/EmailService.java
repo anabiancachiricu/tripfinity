@@ -1,5 +1,6 @@
 package com.unibuc.tripfinity.service;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
 import jakarta.activation.FileDataSource;
@@ -27,7 +28,9 @@ public class EmailService {
         properties.put("mail.smtp.starttls.enable", "true");
 
         String username = "tripfinityapplication@gmail.com"; // Your Gmail email
-        String password = "cncbltfvvugjcatp"; // Your Gmail password or app-specific password
+
+        Dotenv amadeusEnv = Dotenv.load(); // Loads the .env file
+        String password = amadeusEnv.get("GMAIL_PASS");
 
         Session session = Session.getInstance(properties, new Authenticator() {
             @Override
