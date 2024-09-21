@@ -4,6 +4,7 @@ import com.amadeus.exceptions.ResponseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unibuc.tripfinity.model.AirportInfo;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -22,11 +23,10 @@ import java.util.List;
 
 @Service
 public class AirportService {
-    @Value("${amadeus.api.key}")
-    private String apiKey;
 
-    @Value("${amadeus.api.secret}")
-    private String apiSecret;
+    Dotenv amadeusEnv = Dotenv.load();
+    private String apiKey = amadeusEnv.get("AMADEUS_API_KEY_PROD");
+    private String apiSecret = amadeusEnv.get("AMADEUS_API_SECRET_PROD");
 
     private final CloseableHttpClient httpClient = HttpClients.createDefault();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -35,7 +35,8 @@ public class AirportService {
 
         System.out.println("HERE");
         String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
-        String url = "https://test.api.amadeus.com/v1/reference-data/locations?keyword=" + encodedKeyword + "&subType=AIRPORT";
+//        String url = "https://test.api.amadeus.com/v1/reference-data/locations?keyword=" + encodedKeyword + "&subType=AIRPORT";
+        String url = "https://api.amadeus.com/v1/reference-data/locations?keyword=" + encodedKeyword + "&subType=AIRPORT";
 
         HttpGet request = new HttpGet(url);
         request.addHeader("Authorization", "Bearer " + getAccessToken());
@@ -66,7 +67,8 @@ public class AirportService {
     }
 
     public String getAccessToken() throws IOException {
-        String url = "https://test.api.amadeus.com/v1/security/oauth2/token";
+//        String url = "https://test.api.amadeus.com/v1/security/oauth2/token";
+        String url = "https://api.amadeus.com/v1/security/oauth2/token";
         HttpPost post = new HttpPost(url);
 
         // Set headers

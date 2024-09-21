@@ -79,7 +79,7 @@
 		<dependency>
 			<groupId>com.amadeus</groupId>
 			<artifactId>amadeus-java</artifactId>
-			<version>7.0.0</version>
+			<version>9.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -106,6 +106,13 @@
 			<artifactId>jakarta.activation-api</artifactId>
 			<version>2.0.1</version>
 		</dependency>
+
+		<dependency>
+			<groupId>io.github.cdimascio</groupId>
+			<artifactId>java-dotenv</artifactId>
+			<version>5.2.2</version>
+		</dependency>
+
 
 	</dependencies>
 

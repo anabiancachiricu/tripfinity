@@ -14,6 +14,7 @@ import com.unibuc.tripfinity.model.Flight;
 import com.unibuc.tripfinity.model.FlightDestinationDTO;
 import com.unibuc.tripfinity.model.FlightOfferDTO;
 import com.unibuc.tripfinity.repository.FlightRepository;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +26,9 @@ import java.util.Optional;
 @Service
 public class FlightService {
 
-    @Value("${amadeus.api.key}")
-    private String apiKey;
-
-    @Value("${amadeus.api.secret}")
-    private String apiSecret;
+    Dotenv amadeusEnv = Dotenv.load();
+    private String apiKey = amadeusEnv.get("AMADEUS_API_KEY_PROD");
+    private String apiSecret = amadeusEnv.get("AMADEUS_API_SECRET_PROD");
 
     private final FlightDestinationMapper flightDestinationMapper;
 
@@ -52,7 +51,9 @@ public class FlightService {
 
     //direct destinations from origin airport
     public List<FlightDestination> searchFlightsFromAirport(String origin) throws ResponseException {
-        Amadeus amadeus = Amadeus.builder(apiKey, apiSecret).build();
+        Amadeus amadeus = Amadeus.builder(apiKey, apiSecret)
+                .setHostname("production")
+                .build();
 
         Params params = Params.with("origin", origin);
         FlightDestination[] flightDestinations = amadeus.shopping.flightDestinations.get(params);
@@ -72,7 +73,9 @@ public class FlightService {
 
     //flights from an airport to another
     public List<FlightOfferDTO> searchSpecificFlight(String origin, String destination, String departureDate, String returnDate, int adults ) throws ResponseException {
-        Amadeus amadeus = Amadeus.builder(apiKey, apiSecret).build();
+        Amadeus amadeus = Amadeus.builder(apiKey, apiSecret)
+                .setHostname("production")
+                .build();
 
         Params params = Params.with("originLocationCode", origin)
                 .and("destinationLocationCode", destination)
@@ -100,7 +103,9 @@ public class FlightService {
 
     public List<DirectDestinationDTO> searchDirectDestinations(String airportCode) throws ResponseException {
         //Creare client Amadeus
-        Amadeus amadeus = Amadeus.builder(apiKey, apiSecret).build();
+        Amadeus amadeus = Amadeus.builder(apiKey, apiSecret)
+                .setHostname("production")
+                .build();
         //Setarea parametrilor necesari
         Params params = Params.with("departureAirportCode", airportCode);
         //Request-ul realizat către Amadeus si salvarea lui într-o listă

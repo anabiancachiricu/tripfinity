@@ -1,6 +1,7 @@
 package com.unibuc.tripfinity.controller;
 
 import com.unibuc.tripfinity.service.GeminiService;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,8 @@ public class GeminiController {
     @Autowired
     GeminiService geminiService;
 
-    @Value("${gemini.api.key}")
-    private String geminiKey;
+    Dotenv amadeusEnv = Dotenv.load(); // Loads the .env file
+    private String geminiKey = amadeusEnv.get("GEMINI_API_KEY");
 
     @GetMapping("/ask")
     public ResponseEntity<String> getResponse(@RequestParam String prompt) throws JSONException {

@@ -9,6 +9,7 @@ import com.unibuc.tripfinity.mapper.HotelMapper;
 import com.unibuc.tripfinity.mapper.HotelOfferMapper;
 import com.unibuc.tripfinity.model.HotelDTO;
 import com.unibuc.tripfinity.model.HotelOfferDTO;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +21,9 @@ import java.util.Map;
 @Service
 public class HotelService {
 
-    @Value("${amadeus.api.key}")
-    private String apiKey;
-
-    @Value("${amadeus.api.secret}")
-    private String apiSecret;
+    Dotenv amadeusEnv = Dotenv.load();
+    private String apiKey = amadeusEnv.get("AMADEUS_API_KEY_PROD");
+    private String apiSecret = amadeusEnv.get("AMADEUS_API_SECRET_PROD");
 
     private final CityService cityService;
     private final HotelMapper hotelMapper;
@@ -42,6 +41,7 @@ public class HotelService {
         cityName= cityName.toUpperCase();
         Amadeus amadeus = Amadeus
                 .builder(apiKey, apiSecret)
+                .setHostname("production")
                 .build();
 
         Map<String, Double> cityCoordinates = cityService.getCityCoordinates(cityName);
@@ -76,6 +76,7 @@ public class HotelService {
     public List<HotelOfferDTO> searchOffer(String hotelId, String checkIn, String checkOut, int adults) throws ResponseException {
         Amadeus amadeus = Amadeus
                 .builder(apiKey, apiSecret)
+                .setHostname("production")
                 .build();
 
         //Setarea parametrilor
@@ -104,6 +105,7 @@ public class HotelService {
     public HotelDTO searchHotelById(String hotelId, String city) throws ResponseException {
         Amadeus amadeus = Amadeus
                 .builder(apiKey, apiSecret)
+                .setHostname("production")
                 .build();
         System.out.println("HOTEL ID IN SEARCH: "+ hotelId);
         List<String> hotelIdList = new ArrayList<>();
