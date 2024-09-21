@@ -11,5 +11,7 @@ Functionalities:
 - Itinerary planner
 - Wishlists and favourites list
 - AI chat (Google Gemini integration)
+
 The data for flights, hotels and activities is obtained by integrating with Amadeus Api.
+
 This is an application designed for college project, so the reservations are not sent to real flight operators/ hotels.
