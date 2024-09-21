@@ -4,6 +4,7 @@ import com.amadeus.Amadeus;
 import com.amadeus.Params;
 import com.amadeus.exceptions.ResponseException;
 import com.amadeus.resources.City;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -13,17 +14,9 @@ import java.util.Map;
 @Service
 public class CityService {
 
-//    @Value("${amadeus.api.key}")
-//    private String apiKey;
-//
-//    @Value("${amadeus.api.secret}")
-//    private String apiSecret;
-
-    @Value("${amadeus.api.key.prod}")
-    private String apiKey;
-
-    @Value("${amadeus.api.secret.prod}")
-    private String apiSecret;
+    Dotenv amadeusEnv = Dotenv.load();
+    private String apiKey = amadeusEnv.get("AMADEUS_API_KEY_PROD");
+    private String apiSecret = amadeusEnv.get("AMADEUS_API_SECRET_PROD");
 
 
     public Map<String, Double> getCityCoordinates(String city) throws ResponseException {

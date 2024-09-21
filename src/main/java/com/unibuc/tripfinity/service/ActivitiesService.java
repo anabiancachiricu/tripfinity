@@ -6,6 +6,7 @@ import com.amadeus.exceptions.ResponseException;
 import com.amadeus.resources.Activity;
 import com.unibuc.tripfinity.mapper.ActivityMapper;
 import com.unibuc.tripfinity.model.ActivityDTO;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,17 +18,9 @@ import java.util.Map;
 @Service
 public class ActivitiesService {
 
-//    @Value("${amadeus.api.key}")
-//    private String apiKey;
-//
-//    @Value("${amadeus.api.secret}")
-//    private String apiSecret;
-
-    @Value("${amadeus.api.key.prod}")
-    private String apiKey;
-
-    @Value("${amadeus.api.secret.prod}")
-    private String apiSecret;
+    Dotenv amadeusEnv = Dotenv.load(); // Loads the .env file
+    private String apiKey = amadeusEnv.get("AMADEUS_API_KEY_PROD");
+    private String apiSecret = amadeusEnv.get("AMADEUS_API_SECRET_PROD");
 
     private final CityService cityService;
     private final ActivityMapper activityMapper;
